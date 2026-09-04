@@ -243,7 +243,7 @@ Antes de instalar el proyecto necesitas tener listo lo siguiente:
 Clona el repositorio en tu máquina.
 
 ```bash
-git clone https://github.com/tu-usuario/whatsapp-bot-dashboard.git
+git clone https://github.com/JAVIER10733/whatsapp-bot-dashboard.git
 cd whatsapp-bot-dashboard
 ```
 
