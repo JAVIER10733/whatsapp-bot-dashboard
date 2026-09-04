@@ -1,22 +1,35 @@
-# WhatsApp Bot Dashboard
+<div align="center">
 
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![Baileys](https://img.shields.io/badge/Baileys-6.x-blue.svg)](https://github.com/WhiskeySockets/Baileys)
-[![Express](https://img.shields.io/badge/Express-4.x-lightgrey.svg)](https://expressjs.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12&height=200&section=header&text=WhatsApp%20Bot%20Dashboard&fontSize=45&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Panel%20de%20control%20multi%20instancia%20para%20WhatsApp&descAlignY=55&descSize=18" width="100%"/>
 
-Panel de control para gestionar múltiples instancias de bots de WhatsApp. Construido con Baileys, Express y una interfaz oscura de estilo Luxury UI.
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&duration=3000&pause=1000&color=D4AF37&center=true&vCenter=true&width=600&lines=Gesti%C3%B3n+multi+instancia+en+tiempo+real;Construido+con+Baileys+%2B+Express+%2B+Socket.io;Interfaz+Luxury+UI+oscura+y+elegante" alt="Typing SVG" />
 
-**Autor:** Javier
-**Ubicación:** Ventanas, Los Ríos, Ecuador
-**Experiencia:** 7 años como Full-Stack Developer
+<br/>
 
----
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Baileys](https://img.shields.io/badge/Baileys-6.x-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/WhiskeySockets/Baileys)
+[![Express](https://img.shields.io/badge/Express-4.x-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Socket.io](https://img.shields.io/badge/Socket.io-4.x-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
+[![License](https://img.shields.io/badge/License-MIT-D4AF37?style=for-the-badge)](LICENSE)
+
+<img src="https://img.shields.io/github/stars/tu-usuario/whatsapp-bot-dashboard?style=social" />
+<img src="https://img.shields.io/github/forks/tu-usuario/whatsapp-bot-dashboard?style=social" />
+<img src="https://img.shields.io/github/last-commit/tu-usuario/whatsapp-bot-dashboard?style=flat-square&color=D4AF37" />
+<img src="https://img.shields.io/github/issues/tu-usuario/whatsapp-bot-dashboard?style=flat-square&color=D4AF37" />
+
+**Autor:** Javier &nbsp;|&nbsp; **Ubicación:** Ventanas, Los Ríos, Ecuador &nbsp;|&nbsp; **Experiencia:** 7 años como Full-Stack Developer
+
+</div>
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=12&height=3&width=100%"/>
 
 ## Tabla de contenidos
 
+<details>
+<summary>Haz clic para expandir</summary>
+
 - [Descripción](#descripción)
+- [Demo](#demo)
 - [Características](#características)
 - [Stack tecnológico](#stack-tecnológico)
 - [Estructura del proyecto](#estructura-del-proyecto)
@@ -33,7 +46,9 @@ Panel de control para gestionar múltiples instancias de bots de WhatsApp. Const
 - [Licencia](#licencia)
 - [Contacto](#contacto)
 
----
+</details>
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=12&height=3&width=100%"/>
 
 ## Descripción
 
@@ -41,27 +56,56 @@ Este proyecto conecta y administra varios números de WhatsApp desde un solo pan
 
 El sistema está pensado para negocios que atienden clientes por WhatsApp y necesitan centralizar mensajes, automatizar respuestas y monitorear el estado de cada línea desde un mismo lugar.
 
+## Demo
+
+<div align="center">
+
+<img src="https://via.placeholder.com/800x450/1a1a1a/D4AF37?text=Reemplaza+esta+imagen+con+tu+GIF+de+demo" width="80%" alt="Demo del dashboard"/>
+
+<br/><br/>
+
+<sub>Graba tu pantalla con <a href="https://www.screentogif.com/">ScreenToGif</a> o <a href="https://github.com/phw/peek">Peek</a>, guarda el archivo como <code>demo.gif</code> dentro de <code>docs/assets/</code> y reemplaza la imagen de arriba con esa ruta</sub>
+
+</div>
+
 ## Características
 
-**Gestión multi instancia**
+<table>
+<tr>
+<td width="50%">
+
+### Gestión multi instancia
 Conecta y controla varios números de WhatsApp al mismo tiempo, cada uno con su propia sesión y configuración.
 
-**Sincronización en tiempo real**
+### Sincronización en tiempo real
 Los mensajes, estados de conexión y notificaciones llegan al instante al dashboard gracias a Socket.io.
 
-**Interfaz Luxury UI**
+### Interfaz Luxury UI
 Diseño oscuro con acentos dorados. Se adapta a cualquier tamaño de pantalla.
 
-**Conexión flexible**
-Soporta vinculación por código QR y por código de emparejamiento (pairing code).
+</td>
+<td width="50%">
 
-**Protección de cuentas**
-Aplica delays humanizados entre mensajes, gestiona la memoria de forma eficiente y reconecta automáticamente cuando una sesión se cae.
+### Conexión flexible
+Soporta vinculación por código QR y por código de emparejamiento.
 
-**Arquitectura por capas**
-Separa con claridad la API, el motor del bot, la base de datos y el frontend. Esto facilita el mantenimiento y el crecimiento del proyecto.
+### Protección de cuentas
+Aplica delays humanizados entre mensajes, gestiona la memoria y reconecta de forma automática.
+
+### Arquitectura por capas
+Separa la API, el motor del bot, la base de datos y el frontend. Esto facilita el mantenimiento del proyecto.
+
+</td>
+</tr>
+</table>
 
 ## Stack tecnológico
+
+<div align="center">
+
+<img src="https://skillicons.dev/icons?i=nodejs,express,html,css,js,socketio,postgres,redis,docker,sqlite" />
+
+</div>
 
 | Capa | Tecnologías |
 |---|---|
@@ -262,6 +306,10 @@ npm test
 
 ## Contribución
 
+<div align="center">
+<img src="https://contrib.rocks/image?repo=tu-usuario/whatsapp-bot-dashboard" />
+</div>
+
 Las contribuciones son bienvenidas. Sigue estos pasos:
 
 1. Haz un fork del repositorio
@@ -278,7 +326,17 @@ Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para má
 
 ## Contacto
 
+<div align="center">
+
 **Javier**
 Full-Stack Developer, Ventanas, Los Ríos, Ecuador
 
+[![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:tu-correo@gmail.com)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/tu-usuario)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/tu-usuario)
+
 Para reportar errores o proponer mejoras, abre un issue en este repositorio.
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12&height=100&section=footer" width="100%"/>
+
+</div>
