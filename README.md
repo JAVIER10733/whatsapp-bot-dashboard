@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12&height=200&section=header&text=WhatsApp%20Bot%20Dashboard&fontSize=45&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Panel%20de%20control%20multi%20instancia%20para%20WhatsApp&descAlignY=55&descSize=18" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12&height=220&section=header&text=WhatsApp%20Bot%20Dashboard&fontSize=45&fontColor=ffffff&animation=fadeIn&fontAlignY=32&desc=Panel%20de%20control%20multi%20instancia%20para%20WhatsApp&descAlignY=52&descSize=18" width="100%"/>
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&duration=3000&pause=1000&color=D4AF37&center=true&vCenter=true&width=600&lines=Gesti%C3%B3n+multi+instancia+en+tiempo+real;Construido+con+Baileys+%2B+Express+%2B+Socket.io;Interfaz+Luxury+UI+oscura+y+elegante" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&duration=3000&pause=1000&color=D4AF37&center=true&vCenter=true&width=650&lines=Gesti%C3%B3n+multi+instancia+en+tiempo+real;Construido+con+Baileys+%2B+Express+%2B+Socket.io;Interfaz+Luxury+UI+oscura+y+elegante;Reconexi%C3%B3n+autom%C3%A1tica+y+anti+ban" alt="Typing SVG" />
 
 <br/>
 
@@ -10,12 +10,17 @@
 [![Baileys](https://img.shields.io/badge/Baileys-6.x-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/WhiskeySockets/Baileys)
 [![Express](https://img.shields.io/badge/Express-4.x-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-4.x-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-D4AF37?style=for-the-badge)](LICENSE)
 
 <img src="https://img.shields.io/github/stars/tu-usuario/whatsapp-bot-dashboard?style=social" />
 <img src="https://img.shields.io/github/forks/tu-usuario/whatsapp-bot-dashboard?style=social" />
+<img src="https://img.shields.io/github/watchers/tu-usuario/whatsapp-bot-dashboard?style=social" />
+<br/>
 <img src="https://img.shields.io/github/last-commit/tu-usuario/whatsapp-bot-dashboard?style=flat-square&color=D4AF37" />
 <img src="https://img.shields.io/github/issues/tu-usuario/whatsapp-bot-dashboard?style=flat-square&color=D4AF37" />
+<img src="https://img.shields.io/github/repo-size/tu-usuario/whatsapp-bot-dashboard?style=flat-square&color=D4AF37" />
+<img src="https://komarev.com/ghpvc/?username=tu-usuario&label=Visitas+al+repo&color=D4AF37&style=flat-square" />
 
 **Autor:** Javier &nbsp;|&nbsp; **Ubicación:** Ventanas, Los Ríos, Ecuador &nbsp;|&nbsp; **Experiencia:** 7 años como Full-Stack Developer
 
@@ -32,7 +37,9 @@
 - [Demo](#demo)
 - [Características](#características)
 - [Stack tecnológico](#stack-tecnológico)
+- [Nivel de dominio por tecnología](#nivel-de-dominio-por-tecnología)
 - [Estructura del proyecto](#estructura-del-proyecto)
+- [Arquitectura del sistema](#arquitectura-del-sistema)
 - [Requisitos previos](#requisitos-previos)
 - [Instalación](#instalación)
 - [Configuración](#configuración)
@@ -103,7 +110,7 @@ Separa la API, el motor del bot, la base de datos y el frontend. Esto facilita e
 
 <div align="center">
 
-<img src="https://skillicons.dev/icons?i=nodejs,express,html,css,js,socketio,postgres,redis,docker,sqlite" />
+<img src="https://skillicons.dev/icons?i=nodejs,express,html,css,js,socketio,postgres,redis,docker,sqlite,github,vscode" />
 
 </div>
 
@@ -114,6 +121,29 @@ Separa la API, el motor del bot, la base de datos y el frontend. Esto facilita e
 | Motor del bot | @whiskeysockets/baileys, pino, node cache |
 | Base de datos | SQLite en desarrollo, PostgreSQL en producción, Redis para cache y sesiones |
 | DevOps | Docker, PM2, GitHub Actions |
+
+## Nivel de dominio por tecnología
+
+<div align="center">
+
+**Node.js**
+![](https://progress-bar.xyz/95?title=Dominio&width=400&color=D4AF37)
+
+**Baileys**
+![](https://progress-bar.xyz/90?title=Dominio&width=400&color=D4AF37)
+
+**Express**
+![](https://progress-bar.xyz/90?title=Dominio&width=400&color=D4AF37)
+
+**PostgreSQL**
+![](https://progress-bar.xyz/80?title=Dominio&width=400&color=D4AF37)
+
+**Docker**
+![](https://progress-bar.xyz/75?title=Dominio&width=400&color=D4AF37)
+
+<sub>Ajusta estos porcentajes a tu nivel real en cada tecnología</sub>
+
+</div>
 
 ## Estructura del proyecto
 
@@ -176,6 +206,27 @@ whatsapp-bot-dashboard/
 ├── .gitignore
 └── package.json
 ```
+
+## Arquitectura del sistema
+
+```mermaid
+flowchart LR
+    A[Cliente WhatsApp] <--> B[Baileys Socket]
+    B <--> C[Instance Manager]
+    C <--> D[Handlers de eventos]
+    D <--> E[Comandos del bot]
+    C <--> F[(Redis Sesiones)]
+    D <--> G[(PostgreSQL)]
+    C <--> H[API Express]
+    H <--> I[WebSocket Server]
+    I <--> J[Dashboard Frontend]
+
+    style A fill:#25D366,color:#fff
+    style J fill:#D4AF37,color:#000
+    style C fill:#000,color:#D4AF37
+```
+
+<sub>GitHub renderiza los bloques mermaid de forma nativa dentro del README, sin necesidad de imágenes externas</sub>
 
 ## Requisitos previos
 
@@ -334,8 +385,15 @@ Full-Stack Developer, Ventanas, Los Ríos, Ecuador
 [![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:tu-correo@gmail.com)
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/tu-usuario)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/tu-usuario)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/593000000000)
 
 Para reportar errores o proponer mejoras, abre un issue en este repositorio.
+
+<br/>
+
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=tu-usuario&theme=react-dark&hide_border=true&color=D4AF37&line=D4AF37&point=ffffff" width="100%"/>
+
+<br/><br/>
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12&height=100&section=footer" width="100%"/>
 
