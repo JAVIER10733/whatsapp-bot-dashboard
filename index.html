@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Dashboard profesional para gestión de bots de WhatsApp, automatización de flujos, analíticas y gestión de contactos en tiempo real.">
+    <meta name="keywords" content="WhatsApp Bot, Dashboard, Automatización, API WhatsApp, Gestión de Contactos">
+    <meta name="author" content="Javier">
+    <meta name="theme-color" content="#25d366">
+    
+    <!-- Seguridad: Content Security Policy (Ajustar según tus dominios reales) -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self';">
+    
+    <!-- PWA & Mobile -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bot Dashboard">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="WhatsApp Bot Dashboard | Panel de Control">
+    <meta property="og:description" content="Gestiona tus instancias, flujos y contactos de WhatsApp desde un panel profesional.">
+    <meta property="og:image" content="assets/og-image.png">
+    
+    <title>WhatsApp Bot Dashboard | Panel de Control</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    
+    <!-- Font Awesome (con integridad para seguridad) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ============================================ -->
+    <!-- LOADING SCREEN -->
+    <!-- ============================================ -->
+    <div class="loading-screen" id="loadingScreen" role="status" aria-live="polite" aria-label="Cargando aplicación">
+        <div class="loading-content">
+            <div class="loading-logo" aria-hidden="true">
+                <i class="fab fa-whatsapp"></i>
+            </div>
+            <div class="loading-spinner" aria-hidden="true"></div>
+            <p class="loading-text">Cargando Dashboard...</p>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- APP CONTAINER -->
+    <!-- ============================================ -->
+    <div class="app-container" id="appContainer">
+        
+        <!-- ============================================ -->
+        <!-- SIDEBAR -->
+        <!-- ============================================ -->
+        <aside class="sidebar" id="sidebar" aria-label="Menú lateral de navegación">
+            <!-- Logo -->
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon" aria-hidden="true">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">Bot Dashboard</span>
+                        <span class="logo-subtitle">WhatsApp Platform</span>
+                    </div>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Cerrar menú lateral" aria-expanded="true" aria-controls="sidebar">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="sidebar-nav" aria-label="Navegación principal">
+                <div class="nav-section">
+                    <span class="nav-section-title" id="nav-main-title">Principal</span>
+                    <a href="#dashboard" class="nav-item active" data-page="dashboard" aria-current="page" aria-labelledby="nav-main-title">
+                        <i class="fas fa-chart-line" aria-hidden="true"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#instances" class="nav-item" data-page="instances">
+                        <i class="fas fa-robot" aria-hidden="true"></i>
+                        <span>Instancias</span>
+                        <span class="badge badge-primary" id="instancesCount" aria-label="0 instancias">0</span>
+                    </a>
+                    <a href="#chat" class="nav-item" data-page="chat">
+                        <i class="fas fa-comments" aria-hidden="true"></i>
+                        <span>Chat en Vivo</span>
+                        <span class="badge badge-danger" id="unreadMessages" aria-label="0 mensajes no leídos">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title" id="nav-management-title">Gestión</span>
+                    <a href="#flows" class="nav-item" data-page="flows">
+                        <i class="fas fa-project-diagram" aria-hidden="true"></i>
+                        <span>Flujos</span>
+                    </a>
+                    <a href="#contacts" class="nav-item" data-page="contacts">
+                        <i class="fas fa-address-book" aria-hidden="true"></i>
+                        <span>Contactos</span>
+                    </a>
+                    <a href="#broadcasts" class="nav-item" data-page="broadcasts">
+                        <i class="fas fa-bullhorn" aria-hidden="true"></i>
+                        <span>Difusiones</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title" id="nav-system-title">Sistema</span>
+                    <a href="#analytics" class="nav-item" data-page="analytics">
+                        <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                        <span>Analíticas</span>
+                    </a>
+                    <a href="#settings" class="nav-item" data-page="settings">
+                        <i class="fas fa-cog" aria-hidden="true"></i>
+                        <span>Configuración</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" aria-hidden="true">
+                        <i class="fas fa-user"></i>
+                        <span class="user-status-indicator"></span>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">Administrador</span>
+                        <span class="user-role">Admin</span>
+                    </div>
+                    <button class="user-menu-btn" id="userMenuBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+                        <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ============================================ -->
+        <!-- MAIN CONTENT -->
+        <!-- ============================================ -->
+        <main class="main-content" id="main-content" role="main">
+            
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú lateral" aria-expanded="false" aria-controls="sidebar">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
+                    </button>
+                    <nav class="breadcrumb" aria-label="Migas de pan">
+                        <span class="breadcrumb-item">Inicio</span>
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                        <span class="breadcrumb-item active" id="currentPage" aria-current="page">Dashboard</span>
+                    </nav>
+                </div>
+                
+                <div class="header-center">
+                    <div class="search-box" role="search">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                        <label for="globalSearch" class="sr-only">Búsqueda global</label>
+                        <input type="search" placeholder="Buscar contactos, mensajes, flujos..." id="globalSearch" autocomplete="off" aria-label="Buscar en el dashboard">
+                        <kbd>Ctrl+K</kbd>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <button class="header-btn" id="themeToggle" title="Cambiar tema" aria-label="Cambiar entre tema claro y oscuro">
+                        <i class="fas fa-moon" aria-hidden="true"></i>
+                    </button>
+                    
+                    <button class="header-btn notification-btn" id="notificationsBtn" aria-label="Notificaciones" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-bell" aria-hidden="true"></i>
+                        <span class="notification-badge" id="notificationCount" aria-label="3 notificaciones nuevas">3</span>
+                    </button>
+
+                    <button class="btn btn-primary" id="newInstanceBtn">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
+                        <span>Nueva Instancia</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-wrapper">
+                
+                <!-- ============================================ -->
+                <!-- PAGE: DASHBOARD -->
+                <!-- ============================================ -->
+                <section class="page active" id="page-dashboard" role="region" aria-labelledby="dashboard-title">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" id="dashboard-title">Dashboard</h1>
+                            <p class="page-subtitle">Resumen general de tu plataforma de bots</p>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-download" aria-hidden="true"></i>
+                                Exportar
+                            </button>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                                Actualizar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid" role="list">
+                        <article class="stat-card" role="listitem">
+                            <div class="stat-header">
+                                <div class="stat-icon stat-icon-blue" aria-hidden="true">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <span class="stat-trend trend-up">
+                                    <i class="fas fa-arrow-up" aria-hidden="true"></i> 12%
+                                </span>
+                            </div>
+                            <div class="stat-body">
+                                <h3 class="stat-value" id="statInstances">0</h3>
+                                <p class="stat-label">Instancias Activas</p>
+                            </div>
+                            <div class="stat-footer">
+                                <span class="stat-detail">De 5 totales</span>
+                            </div>
+                        </article>
+
+                        <article class="stat-card" role="listitem">
+                            <div class="stat-header">
+                                <div class="stat-icon stat-icon-green" aria-hidden="true">
+                                    <i class="fas fa-paper-plane"></i>
+                                </div>
+                                <span class="stat-trend trend-up">
+                                    <i class="fas fa-arrow-up" aria-hidden="true"></i> 24%
+                                </span>
+                            </div>
+                            <div class="stat-body">
+                                <h3 class="stat-value" id="statMessages">0</h3>
+                                <p class="stat-label">Mensajes Hoy</p>
+                            </div>
+                            <div class="stat-footer">
+                                <span class="stat-detail">+156 vs ayer</span>
+                            </div>
+                        </article>
+
+                        <article class="stat-card" role="listitem">
+                            <div class="stat-header">
+                                <div class="stat-icon stat-icon-orange" aria-hidden="true">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span class="stat-trend trend-up">
+                                    <i class="fas fa-arrow-up" aria-hidden="true"></i> 8%
+                                </span>
+                            </div>
+                            <div class="stat-body">
+                                <h3 class="stat-value" id="statContacts">0</h3>
+                                <p class="stat-label">Contactos Totales</p>
+                            </div>
+                            <div class="stat-footer">
+                                <span class="stat-detail">+23 nuevos</span>
+                            </div>
+                        </article>
+
+                        <article class="stat-card" role="listitem">
+                            <div class="stat-header">
+                                <div class="stat-icon stat-icon-purple" aria-hidden="true">
+                                    <i class="fas fa-project-diagram"></i>
+                                </div>
+                                <span class="stat-trend trend-down">
+                                    <i class="fas fa-arrow-down" aria-hidden="true"></i> 3%
+                                </span>
+                            </div>
+                            <div class="stat-body">
+                                <h3 class="stat-value" id="statFlows">0</h3>
+                                <p class="stat-label">Flujos Activos</p>
+                            </div>
+                            <div class="stat-footer">
+                                <span class="stat-detail">2 en borrador</span>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Charts & Activity Row -->
+                    <div class="dashboard-row">
+                        <!-- Messages Chart -->
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Mensajes por Hora</h3>
+                                <div class="card-actions" role="group" aria-label="Filtro de tiempo del gráfico">
+                                    <button class="btn btn-sm btn-outline" aria-pressed="false">Hoy</button>
+                                    <button class="btn btn-sm" aria-pressed="true">Semana</button>
+                                    <button class="btn btn-sm btn-outline" aria-pressed="false">Mes</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container" id="messagesChart" role="img" aria-label="Gráfico de líneas de mensajes por hora">
+                                    <div class="chart-placeholder">
+                                        <i class="fas fa-chart-line" aria-hidden="true"></i>
+                                        <p>Gráfico de mensajes</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="card activity-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Actividad Reciente</h3>
+                                <button class="btn btn-sm btn-link">Ver todo</button>
+                            </div>
+                            <div class="card-body">
+                                <ul class="activity-list" id="activityList" aria-label="Lista de actividad reciente">
+                                    <!-- Se llena dinámicamente -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instances Overview -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Estado de Instancias</h3>
+                            <button class="btn btn-sm btn-primary" onclick="navigateToPage('instances')">
+                                Ver todas
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="instances-overview" id="instancesOverview" role="list">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============================================ -->
+                <!-- PAGE: INSTANCES -->
+                <!-- ============================================ -->
+                <section class="page" id="page-instances" role="region" aria-labelledby="instances-title" hidden>
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" id="instances-title">Instancias</h1>
+                            <p class="page-subtitle">Gestiona tus conexiones de WhatsApp</p>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" id="createInstanceBtn">
+                                <i class="fas fa-plus" aria-hidden="true"></i>
+                                Nueva Instancia
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters-bar" role="group" aria-label="Filtros de instancias">
+                        <div class="filter-group">
+                            <button class="filter-btn active" data-filter="all" aria-pressed="true">Todas</button>
+                            <button class="filter-btn" data-filter="connected" aria-pressed="false">Conectadas</button>
+                            <button class="filter-btn" data-filter="disconnected" aria-pressed="false">Desconectadas</button>
+                        </div>
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <label for="instancesSearch" class="sr-only">Buscar instancia</label>
+                            <input type="search" placeholder="Buscar instancia..." id="instancesSearch" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <!-- Instances Grid -->
+                    <div class="instances-grid" id="instancesGrid" role="list">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </section>
+
+                <!-- ============================================ -->
+                <!-- PAGE: CHAT -->
+                <!-- ============================================ -->
+                <section class="page" id="page-chat" role="region" aria-labelledby="chat-title" hidden>
+                    <h2 class="sr-only" id="chat-title">Chat en Vivo</h2>
+                    <div class="chat-layout">
+                        <!-- Chat Sidebar -->
+                        <aside class="chat-sidebar" aria-label="Lista de conversaciones">
+                            <div class="chat-sidebar-header">
+                                <h3>Conversaciones</h3>
+                                <button class="btn-icon" aria-label="Nueva conversación">
+                                    <i class="fas fa-edit" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="chat-search" role="search">
+                                <i class="fas fa-search" aria-hidden="true"></i>
+                                <label for="chatSearchInput" class="sr-only">Buscar chat</label>
+                                <input type="search" placeholder="Buscar chat..." id="chatSearchInput" autocomplete="off">
+                            </div>
+
+                            <div class="chat-filters" role="tablist" aria-label="Filtros de chat">
+                                <button class="chat-filter active" data-filter="all" role="tab" aria-selected="true">Todos</button>
+                                <button class="chat-filter" data-filter="unread" role="tab" aria-selected="false">No leídos</button>
+                                <button class="chat-filter" data-filter="groups" role="tab" aria-selected="false">Grupos</button>
+                            </div>
+
+                            <ul class="chat-list" id="chatList" role="listbox" aria-label="Conversaciones disponibles">
+                                <!-- Se llena dinámicamente -->
+                            </ul>
+                        </aside>
+
+                        <!-- Chat Main -->
+                        <div class="chat-main" role="main" aria-label="Área de chat">
+                            <div class="chat-empty" id="chatEmpty">
+                                <div class="chat-empty-icon" aria-hidden="true">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <h3>Selecciona una conversación</h3>
+                                <p>Elige un chat de la lista para ver los mensajes</p>
+                            </div>
+
+                            <div class="chat-content hidden" id="chatContent" aria-live="polite">
+                                <div class="chat-header">
+                                    <div class="chat-contact-info">
+                                        <div class="chat-contact-avatar" aria-hidden="true">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="chat-contact-details">
+                                            <h4 id="chatContactName">Nombre</h4>
+                                            <span class="chat-contact-status" id="chatContactStatus">En línea</span>
+                                        </div>
+                                    </div>
+                                    <div class="chat-header-actions">
+                                        <button class="btn-icon" title="Buscar" aria-label="Buscar en la conversación">
+                                            <i class="fas fa-search" aria-hidden="true"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Información" aria-label="Información del contacto">
+                                            <i class="fas fa-info-circle" aria-hidden="true"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Más opciones" aria-label="Más opciones">
+                                            <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-relevant="additions">
+                                    <!-- Mensajes se cargan dinámicamente -->
+                                </div>
+
+                                <form class="chat-input-area" id="chatForm" aria-label="Enviar mensaje">
+                                    <button type="button" class="btn-icon" title="Adjuntar" aria-label="Adjuntar archivo">
+                                        <i class="fas fa-paperclip" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="btn-icon" title="Emoji" aria-label="Insertar emoji">
+                                        <i class="fas fa-smile" aria-hidden="true"></i>
+                                    </button>
+                                    <label for="chatInput" class="sr-only">Escribe un mensaje</label>
+                                    <input type="text" placeholder="Escribe un mensaje..." id="chatInput" autocomplete="off" aria-label="Campo de entrada de mensaje">
+                                    <button type="submit" class="btn btn-primary" id="sendChatBtn" aria-label="Enviar mensaje">
+                                        <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============================================ -->
+                <!-- PAGE: FLOWS -->
+                <!-- ============================================ -->
+                <section class="page" id="page-flows" role="region" aria-labelledby="flows-title" hidden>
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" id="flows-title">Flujos</h1>
+                            <p class="page-subtitle">Constructor visual de automatizaciones</p>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" id="createFlowBtn">
+                                <i class="fas fa-plus" aria-hidden="true"></i>
+                                Nuevo Flujo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flows-grid" id="flowsGrid" role="list">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </section>
+
+                <!-- ============================================ -->
+                <!-- PAGE: CONTACTS -->
+                <!-- ============================================ -->
+                <section class="page" id="page-contacts" role="region" aria-labelledby="contacts-title" hidden>
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" id="contacts-title">Contactos</h1>
+                            <p class="page-subtitle">Gestiona tu base de contactos</p>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-file-import" aria-hidden="true"></i>
+                                Importar
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-file-export" aria-hidden="true"></i>
+                                Exportar
+                            </button>
+                            <button class="btn btn-primary" id="addContactBtn">
+                                <i class="fas fa-plus" aria-hidden="true"></i>
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="contacts-table-wrapper">
+                        <table class="data-table" id="contactsTable" aria-label="Tabla de contactos">
+                            <thead>
+                                <tr>
+                                    <th scope="col"><input type="checkbox" id="selectAll" aria-label="Seleccionar todos los contactos"></th>
+                                    <th scope="col">Contacto</th>
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col">Etiquetas</th>
+                                    <th scope="col">Último mensaje</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contactsTableBody">
+                                <!-- Se llena dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ============================================ -->
+                <!-- PAGE: BROADCASTS -->
+                <!-- ============================================ -->
+                <section class="page" id="page-broadcasts" role="region" aria-labelledby="broadcasts-title" hidden>
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" id="broadcasts-title">Difusiones</h1>
+                            <p class="page-subtitle">Envía mensajes masivos a tus contactos</p>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" id="createBroadcastBtn">
+                                <i class="fas fa-plus" aria-hidden="true"></i>
+                                Nueva Difusión
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="broadcasts-list" id="broadcastsList" role="list">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </section>
+
+                <!-- ============================================ -->
+                <!-- PAGE: ANALYTICS -->
+                <!-- ============================================ -->
+                <section class="page" id="page-analytics" role="region" aria-labelledby="analytics-title" hidden>
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" id="analytics-title">Analíticas</h1>
+                            <p class="page-subtitle">Métricas detalladas de rendimiento</p>
+                        </div>
+                    </div>
+
+                    <div class="analytics-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Mensajes Enviados</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-placeholder" role="img" aria-label="Gráfico de barras de mensajes enviados">
+                                    <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                                    <p>Gráfico de barras</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Tasa de Respuesta</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-placeholder" role="img" aria-label="Gráfico circular de tasa de respuesta">
+                                    <i class="fas fa-chart-pie" aria-hidden="true"></i>
+                                    <p>Gráfico circular</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ============================================ -->
+                <!-- PAGE: SETTINGS -->
+                <!-- ============================================ -->
+                <section class="page" id="page-settings" role="region" aria-labelledby="settings-title" hidden>
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title" id="settings-title">Configuración</h1>
+                            <p class="page-subtitle">Ajustes generales del sistema</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-layout">
+                        <aside class="settings-sidebar" aria-label="Menú de configuración">
+                            <nav class="settings-nav">
+                                <a href="#settings-general" class="settings-nav-item active" data-section="general" aria-current="page">
+                                    <i class="fas fa-cog" aria-hidden="true"></i>
+                                    <span>General</span>
+                                </a>
+                                <a href="#settings-whatsapp" class="settings-nav-item" data-section="whatsapp">
+                                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                                    <span>WhatsApp</span>
+                                </a>
+                                <a href="#settings-notifications" class="settings-nav-item" data-section="notifications">
+                                    <i class="fas fa-bell" aria-hidden="true"></i>
+                                    <span>Notificaciones</span>
+                                </a>
+                                <a href="#settings-security" class="settings-nav-item" data-section="security">
+                                    <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                                    <span>Seguridad</span>
+                                </a>
+                                <a href="#settings-api" class="settings-nav-item" data-section="api">
+                                    <i class="fas fa-code" aria-hidden="true"></i>
+                                    <span>API</span>
+                                </a>
+                            </nav>
+                        </aside>
+
+                        <div class="settings-content">
+                            <!-- General Settings -->
+                            <div class="settings-section active" id="settings-general" role="tabpanel" aria-labelledby="settings-general-tab">
+                                <h3>Configuración General</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="botName">Nombre del Bot</label>
+                                    <input type="text" class="form-input" placeholder="Mi Bot de WhatsApp" id="botName" autocomplete="off">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="botDescription">Descripción</label>
+                                    <textarea class="form-input" rows="3" placeholder="Descripción del bot..." id="botDescription"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="botLanguage">Idioma</label>
+                                    <select class="form-input" id="botLanguage">
+                                        <option value="es">Español</option>
+                                        <option value="en">Inglés</option>
+                                        <option value="pt">Portugués</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="botTimezone">Zona Horaria</label>
+                                    <select class="form-input" id="botTimezone">
+                                        <option value="America/Guayaquil">Guayaquil (GMT-5)</option>
+                                        <option value="America/Mexico_City">Ciudad de México (GMT-6)</option>
+                                        <option value="America/Bogota">Bogotá (GMT-5)</option>
+                                        <option value="America/Argentina/Buenos_Aires">Buenos Aires (GMT-3)</option>
+                                        <option value="Europe/Madrid">Madrid (GMT+1)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="saveGeneralSettings">
+                                        <i class="fas fa-save" aria-hidden="true"></i>
+                                        Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- WhatsApp Settings -->
+                            <div class="settings-section" id="settings-whatsapp" role="tabpanel" aria-labelledby="settings-whatsapp-tab" hidden>
+                                <h3>Configuración de WhatsApp</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="messageDelay">Delay entre mensajes (ms)</label>
+                                    <input type="number" class="form-input" placeholder="1000" min="500" max="10000" id="messageDelay">
+                                    <small class="form-help" id="help-messageDelay">Tiempo de espera entre cada mensaje enviado</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="typingDelay">Delay de escritura (ms)</label>
+                                    <input type="number" class="form-input" placeholder="2000" min="1000" max="5000" id="typingDelay">
+                                    <small class="form-help" id="help-typingDelay">Tiempo que simula estar escribiendo</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="hourlyLimit">Límite de mensajes por hora</label>
+                                    <input type="number" class="form-input" placeholder="100" min="10" max="1000" id="hourlyLimit">
+                                    <small class="form-help" id="help-hourlyLimit">Para evitar baneos por spam</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-check">
+                                        <input type="checkbox" id="autoReply">
+                                        <span>Respuesta automática activada</span>
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-check">
+                                        <input type="checkbox" id="readReceipts">
+                                        <span>Enviar confirmaciones de lectura</span>
+                                    </label>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="saveWhatsappSettings">
+                                        <i class="fas fa-save" aria-hidden="true"></i>
+                                        Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Notifications Settings -->
+                            <div class="settings-section" id="settings-notifications" role="tabpanel" aria-labelledby="settings-notifications-tab" hidden>
+                                <h3>Notificaciones</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-check">
+                                        <input type="checkbox" id="notifyNewMessage">
+                                        <span>Nuevos mensajes</span>
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-check">
+                                        <input type="checkbox" id="notifyInstanceStatus">
+                                        <span>Cambios de estado de instancias</span>
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-check">
+                                        <input type="checkbox" id="notifyErrors">
+                                        <span>Errores del sistema</span>
+                                    </label>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="saveNotificationSettings">
+                                        <i class="fas fa-save" aria-hidden="true"></i>
+                                        Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Security Settings -->
+                            <div class="settings-section" id="settings-security" role="tabpanel" aria-labelledby="settings-security-tab" hidden>
+                                <h3>Seguridad</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Cambiar Contraseña</label>
+                                    <input type="password" class="form-input" placeholder="Contraseña actual" autocomplete="current-password">
+                                    <input type="password" class="form-input" placeholder="Nueva contraseña" style="margin-top: 10px;" autocomplete="new-password">
+                                    <input type="password" class="form-input" placeholder="Confirmar contraseña" style="margin-top: 10px;" autocomplete="new-password">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-check">
+                                        <input type="checkbox" id="twoFactorAuth">
+                                        <span>Autenticación de dos factores</span>
+                                    </label>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="saveSecuritySettings">
+                                        <i class="fas fa-save" aria-hidden="true"></i>
+                                        Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- API Settings -->
+                            <div class="settings-section" id="settings-api" role="tabpanel" aria-labelledby="settings-api-tab" hidden>
+                                <h3>API & Webhooks</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="apiKey">API Key</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-input" value="sk_live_xxxxxxxxxxxx" readonly id="apiKey" aria-readonly="true">
+                                        <button type="button" class="btn btn-outline" id="copyApiKey" aria-label="Copiar API Key">
+                                            <i class="fas fa-copy" aria-hidden="true"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline" id="regenerateApiKey" aria-label="Regenerar API Key">
+                                            <i class="fas fa-sync" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="webhookUrl">Webhook URL</label>
+                                    <input type="url" class="form-input" placeholder="https://tu-servidor.com/webhook" id="webhookUrl" autocomplete="url">
+                                    <small class="form-help" id="help-webhook">URL para recibir notificaciones de eventos</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <fieldset>
+                                        <legend class="form-label">Eventos del Webhook</legend>
+                                        <div class="checkbox-group">
+                                            <label class="form-check">
+                                                <input type="checkbox" checked>
+                                                <span>Mensajes recibidos</span>
+                                            </label>
+                                            <label class="form-check">
+                                                <input type="checkbox" checked>
+                                                <span>Mensajes enviados</span>
+                                            </label>
+                                            <label class="form-check">
+                                                <input type="checkbox">
+                                                <span>Cambios de estado</span>
+                                            </label>
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="saveApiSettings">
+                                        <i class="fas fa-save" aria-hidden="true"></i>
+                                        Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL: QR CONNECTION -->
+    <!-- ============================================ -->
+    <div class="modal" id="qrModal" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title" hidden>
+        <div class="modal-overlay" aria-hidden="true"></div>
+        <div class="modal-container modal-medium">
+            <div class="modal-header">
+                <h3 class="modal-title" id="qr-modal-title">
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                    Conectar Nueva Instancia
+                </h3>
+                <button class="modal-close" id="closeQrModal" aria-label="Cerrar modal">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="qr-steps">
+                    <div class="qr-step active" data-step="1">
+                        <div class="step-number" aria-hidden="true">1</div>
+                        <div class="step-content">
+                            <h4>Nombre de la Instancia</h4>
+                            <label for="instanceName" class="sr-only">Nombre de la instancia</label>
+                            <input type="text" class="form-input" placeholder="Ej: Bot Principal" id="instanceName" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="qr-step" data-step="2" hidden>
+                        <div class="step-number" aria-hidden="true">2</div>
+                        <div class="step-content">
+                            <h4>Escanea el Código QR</h4>
+                            <div class="qr-code-container">
+                                <div class="qr-code" id="qrCode" role="img" aria-label="Código QR para escanear con WhatsApp">
+                                    <i class="fas fa-qrcode" aria-hidden="true"></i>
+                                </div>
+                                <div class="qr-loading hidden" id="qrLoading" role="status" aria-live="polite">
+                                    <div class="spinner" aria-hidden="true"></div>
+                                    <p>Generando código QR...</p>
+                                </div>
+                            </div>
+                            <p class="qr-instructions">
+                                Abre WhatsApp en tu teléfono → Menú → Dispositivos vinculados → Vincular un dispositivo
+                            </p>
+                            <div class="qr-timer" aria-live="polite">
+                                <i class="fas fa-clock" aria-hidden="true"></i>
+                                <span>Expira en: <strong id="qrTimer">60</strong>s</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qr-step" data-step="3" hidden>
+                        <div class="step-number" aria-hidden="true">3</div>
+                        <div class="step-content">
+                            <div class="success-icon" aria-hidden="true">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <h4>¡Conectado Exitosamente!</h4>
+                            <p>Tu instancia está lista para usar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="qrBackBtn" style="display: none;">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    Anterior
+                </button>
+                <button type="button" class="btn btn-primary" id="qrNextBtn">
+                    Siguiente
+                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL: NOTIFICATIONS -->
+    <!-- ============================================ -->
+    <div class="dropdown-modal" id="notificationsModal" role="dialog" aria-modal="true" aria-labelledby="notif-modal-title" hidden>
+        <div class="dropdown-header">
+            <h3 id="notif-modal-title">Notificaciones</h3>
+            <button type="button" class="btn-link" id="markAllRead">Marcar todas como leídas</button>
+        </div>
+        <div class="dropdown-body">
+            <ul class="notification-list" id="notificationList" role="list" aria-label="Lista de notificaciones">
+                <!-- Se llena dinámicamente -->
+            </ul>
+        </div>
+        <div class="dropdown-footer">
+            <button type="button" class="btn-link">Ver todas las notificaciones</button>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL: USER MENU -->
+    <!-- ============================================ -->
+    <div class="dropdown-modal user-dropdown" id="userDropdown" role="menu" aria-label="Menú de usuario" hidden>
+        <div class="dropdown-body">
+            <div class="user-dropdown-header">
+                <div class="user-avatar" aria-hidden="true">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <h4>Administrador</h4>
+                    <p>admin@botplatform.com</p>
+                </div>
+            </div>
+            <nav class="user-dropdown-menu" aria-label="Opciones de usuario">
+                <a href="#profile" class="dropdown-item" role="menuitem">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    <span>Mi Perfil</span>
+                </a>
+                <a href="#settings" class="dropdown-item" role="menuitem">
+                    <i class="fas fa-cog" aria-hidden="true"></i>
+                    <span>Configuración</span>
+                </a>
+                <a href="#help" class="dropdown-item" role="menuitem">
+                    <i class="fas fa-question-circle" aria-hidden="true"></i>
+                    <span>Ayuda</span>
+                </a>
+                <div class="dropdown-divider" role="separator"></div>
+                <a href="#logout" class="dropdown-item text-danger" role="menuitem">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TOAST NOTIFICATIONS -->
+    <!-- ============================================ -->
+    <div class="toast-container" id="toastContainer" role="region" aria-live="polite" aria-label="Notificaciones emergentes"></div>
+
+    <!-- ============================================ -->
+    <!-- SCRIPTS -->
+    <!-- ============================================ -->
+    <script src="app.js" defer></script>
+</body>
+</html>

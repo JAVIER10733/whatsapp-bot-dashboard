@@ -1,0 +1,500 @@
+openapi: 3.0.3
+info:
+  title: WhatsApp Bot Dashboard API
+  description: |
+    API REST profesional para gestionar bots de WhatsApp basados en Baileys.
+    Permite crear, controlar y monitorear múltiples instancias de WhatsApp,
+    enviar mensajes, gestionar contactos y flujos automatizados.
+  version: 1.0.0
+  contact:
+    name: FC OFICIAL Bot
+    email: admin@botplatform.com
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor de desarrollo
+  - url: https://api.botplatform.com/api
+    description: Servidor de producción
+
+tags:
+  - name: Auth
+    description: Autenticación y autorización
+  - name: Instances
+    description: Gestión de instancias de WhatsApp
+  - name: Messages
+    description: Envío y recepción de mensajes
+  - name: Contacts
+    description: Gestión de contactos
+  - name: Flows
+    description: Flujos automatizados del bot
+  - name: Settings
+    description: Configuración del sistema
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Iniciar sesión
+      description: Autentica un usuario y retorna un token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: admin@botplatform.com
+                password:
+                  type: string
+                  format: password
+                  example: securePassword123
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        example: admin@botplatform.com
+                      role:
+                        type: string
+                        example: admin
+        '401':
+          description: Credenciales inválidas
+
+  /instances:
+    get:
+      tags:
+        - Instances
+      summary: Obtener todas las instancias
+      description: Lista todas las instancias de WhatsApp con su estado actual
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de instancias
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Instance'
+        '401':
+          description: No autorizado
+
+  /instances/{id}/connect:
+    post:
+      tags:
+        - Instances
+      summary: Conectar una instancia
+      description: Inicia la conexión de una instancia de WhatsApp (genera QR o código de emparejamiento)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la instancia
+          example: default
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+                  description: Número de teléfono para pairing code (opcional)
+                  example: "5930979832977"
+      responses:
+        '200':
+          description: Instancia iniciada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Instancia iniciada
+                  qrCode:
+                    type: string
+                    description: Código QR (si aplica)
+                    example: "2@abc123..."
+                  pairingCode:
+                    type: string
+                    description: Código de emparejamiento (si aplica)
+                    example: "ABCD-1234"
+        '400':
+          description: La instancia ya está corriendo
+
+  /instances/{id}/disconnect:
+    post:
+      tags:
+        - Instances
+      summary: Desconectar una instancia
+      description: Detiene la conexión de una instancia de WhatsApp
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la instancia
+          example: default
+      responses:
+        '200':
+          description: Instancia detenida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Instancia detenida
+        '404':
+          description: Instancia no encontrada
+
+  /instances/{id}/restart:
+    post:
+      tags:
+        - Instances
+      summary: Reiniciar una instancia
+      description: Reinicia la conexión de una instancia de WhatsApp
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la instancia
+          example: default
+      responses:
+        '200':
+          description: Instancia reiniciada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Instancia reiniciada
+
+  /instances/{id}/status:
+    get:
+      tags:
+        - Instances
+      summary: Obtener estado de una instancia
+      description: Retorna el estado actual de una instancia específica
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la instancia
+          example: default
+      responses:
+        '200':
+          description: Estado de la instancia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceStatus'
+        '404':
+          description: Instancia no encontrada
+
+  /instances/{id}/send-message:
+    post:
+      tags:
+        - Messages
+      summary: Enviar mensaje
+      description: Envía un mensaje a través de una instancia de WhatsApp
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la instancia
+          example: default
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jid
+                - message
+              properties:
+                jid:
+                  type: string
+                  description: JID del destinatario (número@s.whatsapp.net)
+                  example: "5930979832977@s.whatsapp.net"
+                message:
+                  type: object
+                  description: Objeto de mensaje de Baileys
+                  example:
+                    text: "Hola, este es un mensaje de prueba"
+      responses:
+        '200':
+          description: Mensaje enviado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      key:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: "BAE5..."
+                          remoteJid:
+                            type: string
+                            example: "5930979832977@s.whatsapp.net"
+        '400':
+          description: Instancia no conectada o mensaje inválido
+
+  /contacts:
+    get:
+      tags:
+        - Contacts
+      summary: Obtener todos los contactos
+      description: Lista todos los contactos sincronizados
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de contactos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+
+  /flows:
+    get:
+      tags:
+        - Flows
+      summary: Obtener todos los flujos
+      description: Lista todos los flujos automatizados del bot
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de flujos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Flow'
+
+  /settings:
+    get:
+      tags:
+        - Settings
+      summary: Obtener configuración
+      description: Retorna la configuración actual del sistema
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Configuración del sistema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settings'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Instance:
+      type: object
+      properties:
+        id:
+          type: string
+          example: default
+        status:
+          type: string
+          enum: [connecting, connected, disconnected, logged_out, qr_ready, pairing_code_ready]
+          example: connected
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "5930979832977@s.whatsapp.net"
+            name:
+              type: string
+              example: "FC OFICIAL Bot"
+        phoneNumber:
+          type: string
+          example: "5930979832977"
+        uptime:
+          type: integer
+          description: Tiempo de actividad en milisegundos
+          example: 3600000
+
+    InstanceStatus:
+      type: object
+      properties:
+        id:
+          type: string
+          example: default
+        status:
+          type: string
+          example: connected
+        qrCode:
+          type: string
+          description: Código QR actual (si está en estado qr_ready)
+          example: "2@abc123..."
+        pairingCode:
+          type: string
+          description: Código de emparejamiento (si está en estado pairing_code_ready)
+          example: "ABCD-1234"
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        phoneNumber:
+          type: string
+        uptime:
+          type: integer
+
+    Contact:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "5930979832977@s.whatsapp.net"
+        name:
+          type: string
+          example: "Juan Pérez"
+        phone:
+          type: string
+          example: "+593 97 983 2977"
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["Cliente", "VIP"]
+        lastMessage:
+          type: string
+          example: "Hola, ¿cómo estás?"
+        lastMessageTime:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        unread:
+          type: integer
+          example: 2
+
+    Flow:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Bienvenida"
+        status:
+          type: string
+          enum: [active, draft, paused]
+          example: active
+        triggers:
+          type: integer
+          description: Número de veces que se ha activado
+          example: 156
+        createdAt:
+          type: string
+          format: date
+          example: "2024-01-15"
+
+    Settings:
+      type: object
+      properties:
+        botName:
+          type: string
+          example: "FC OFICIAL Bot"
+        messageDelay:
+          type: integer
+          description: Delay entre mensajes en milisegundos
+          example: 1000
+        typingDelay:
+          type: integer
+          description: Delay de escritura en milisegundos
+          example: 2000
+        hourlyLimit:
+          type: integer
+          description: Límite de mensajes por hora
+          example: 100
+        autoReply:
+          type: boolean
+          example: true
+        readReceipts:
+          type: boolean
+          example: true
+        antiCall:
+          type: boolean
+          example: true
